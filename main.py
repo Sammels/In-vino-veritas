@@ -50,8 +50,15 @@ def correct_ends(year):
 logger.debug(correct_ends(vinestart))
 
 
-wines_df = pd.read_excel('wine2.xlsx').fillna('')
-wines_df.rename(columns={'Категория': 'category', 'Название': 'name', 'Сорт': 'type', 'Цена': 'price', 'Картинка': 'picture'}, inplace=True)
+wines_df = pd.read_excel('wine3.xlsx').fillna('')
+wines_df.rename(columns={'Категория': 'category',
+                         'Название': 'name',
+                         'Сорт': 'type',
+                         'Цена': 'price',
+                         'Картинка': 'picture',
+                         'Акция': 'promo'},
+                inplace=True)
+
 wines = wines_df.to_dict(orient='records')
 wines_by_category = defaultdict(list)
 for wine in wines:
