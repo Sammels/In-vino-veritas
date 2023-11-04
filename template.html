@@ -123,8 +123,12 @@
               <div>
                 <h3 class="heading mt-3 mb-3 text-dark">{{wine.name}}</h3>
                 <p>
-                  Сорт винограда - {{wine.type}}<br/>
-                  <span class="price">{{wine.price}} р.</span>
+                  {% if wine.type %}
+                    Сорт винограда - {{wine.type}}<br/>
+                    <span class="price">{{wine.price}} р.</span>
+                  {% else %}
+                    <span class="price">{{wine.price}} р.</span>
+                  {% endif %}
                 </p>
               </div>
             </div>
