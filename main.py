@@ -5,23 +5,12 @@ from settings import logger_config
 from collections import defaultdict
 
 from http.server import HTTPServer, SimpleHTTPRequestHandler
-from pprint import pprint
 
-logging.config.dictConfig(logger_config)
+
 logger = logging.getLogger("main_logger")
 
 import pandas as pd
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-
-env = Environment(
-    loader=FileSystemLoader("."),
-    autoescape=select_autoescape(['html', 'xml'])
-)
-
-template = env.get_template('template.html')
-
-year_now = datetime.datetime.now().year
-vinestart = year_now - 1920
 
 
 def correct_ends(year):
@@ -47,33 +36,71 @@ def correct_ends(year):
         ends = "года"
     return ends
 
-logger.debug(correct_ends(vinestart))
+
+def get_wine(filepath):
+    wines_df = pd.read_excel(filepath).fillna("")
+    wines_df.rename(
+        columns={
+            "Категория": "category",
+            "Название": "name",
+            "Сорт": "type",
+            "Цена": "price",
+            "Картинка": "picture",
+            "Акция": "promo",
+        },
+        inplace=True,
+    )
+
+    wines = wines_df.to_dict(orient="records")
+    wines_by_category = defaultdict(list)
+    for wine in wines:
+        wines_by_category[wine["category"]].append(wine)
+    wines_by_category = dict(sorted(wines_by_category.items()))
+    return wines_by_category
 
 
-wines_df = pd.read_excel('wine3.xlsx').fillna('')
-wines_df.rename(columns={'Категория': 'category',
-                         'Название': 'name',
-                         'Сорт': 'type',
-                         'Цена': 'price',
-                         'Картинка': 'picture',
-                         'Акция': 'promo'},
-                inplace=True)
+def create_parser():
+    parser = argparse.ArgumentParser(
+        prog="Site about new Russian wine",
+        description="The script allows you to start "
+        "site to sell wines. It shows the information about you wines.",
+    )
+    parser.add_argument(
+        "-p",
+        "--path",
+        help="You can specify the path to your data file",
+        default="wine.xlsx",
+    )
+    return parser
 
-wines = wines_df.to_dict(orient='records')
-wines_by_category = defaultdict(list)
-for wine in wines:
-    wines_by_category[wine['category']].append(wine)
-wines_by_category = dict(sorted(wines_by_category.items()))
+
+def main():
+    logging.config.dictConfig(logger_config)
+    parser = create_parser()
+    args = parser.parse_args()
+
+    env = Environment(
+        loader=FileSystemLoader("."), autoescape=select_autoescape(["html", "xml"])
+    )
+
+    template = env.get_template("template.html")
+
+    year_now = datetime.datetime.now().year
+    vinestart = year_now - 1920
+    logger.debug(correct_ends(vinestart))
+
+    rendered_page = template.render(
+        vine_start=vinestart,
+        ending=correct_ends(vinestart),
+        wines_by_category=get_wine(args.path),
+    )
+
+    with open("index.html", "w", encoding="utf8") as file:
+        file.write(rendered_page)
+
+    server = HTTPServer(("0.0.0.0", 8000), SimpleHTTPRequestHandler)
+    server.serve_forever()
 
 
-rendered_page = template.render(
-    vine_start=vinestart,
-    ending=correct_ends(vinestart),
-    wines_by_category=wines_by_category,
-)
-
-with open('index.html', 'w', encoding='utf8') as file:
-    file.write(rendered_page)
-
-server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
-server.serve_forever()
+if __name__ == "__main__":
+    main()
