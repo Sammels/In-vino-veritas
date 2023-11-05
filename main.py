@@ -33,7 +33,7 @@ def correct_ends(year):
     return ends
 
 
-def get_wine(filepath):
+def get_wines(filepath):
     wines_df = pd.read_excel(filepath).fillna("")
     wines_df.rename(
         columns={
@@ -75,6 +75,8 @@ def main():
     parser = create_parser()
     args = parser.parse_args()
 
+    WINERY_FOUND_DATE = 1920
+
     env = Environment(
         loader=FileSystemLoader("."), autoescape=select_autoescape(["html", "xml"])
     )
@@ -82,13 +84,13 @@ def main():
     template = env.get_template("template.html")
 
     year_now = datetime.datetime.now().year
-    vinestart = year_now - 1920
-    logger.debug(correct_ends(vinestart))
+    year_found_winery = year_now - WINERY_FOUND_DATE
+    logger.debug(correct_ends(year_found_winery))
 
     rendered_page = template.render(
-        vine_start=vinestart,
-        ending=correct_ends(vinestart),
-        wines_by_category=get_wine(args.path),
+        wine_start=year_found_winery,
+        ending=correct_ends(year_found_winery),
+        wines_by_category=get_wines(args.path),
     )
 
     with open("index.html", "w", encoding="utf8") as file:
