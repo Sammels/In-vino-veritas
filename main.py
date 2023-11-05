@@ -1,16 +1,13 @@
 import datetime
 import argparse
 import logging.config
+import pandas as pd
 from settings import logger_config
 from collections import defaultdict
-
 from http.server import HTTPServer, SimpleHTTPRequestHandler
-
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 logger = logging.getLogger("main_logger")
-
-import pandas as pd
-from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 
 def correct_ends(year):
@@ -24,7 +21,6 @@ def correct_ends(year):
     Returns:
         str: Возвращает верное окончание.
     """
-
     ends = ""
     if year == 100 or year == 111:
         ends = "лет"
