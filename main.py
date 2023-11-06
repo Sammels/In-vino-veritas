@@ -8,7 +8,7 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 logger = logging.getLogger("main_logger")
-
+winery_found_date = 1920
 
 def correct_ends(year):
     """Функция выводит корректное окончание.
@@ -75,7 +75,6 @@ def main():
     parser = create_parser()
     args = parser.parse_args()
 
-    WINERY_FOUND_DATE = 1920
 
     env = Environment(
         loader=FileSystemLoader("."), autoescape=select_autoescape(["html", "xml"])
@@ -84,7 +83,7 @@ def main():
     template = env.get_template("template.html")
 
     year_now = datetime.datetime.now().year
-    year_found_winery = year_now - WINERY_FOUND_DATE
+    year_found_winery = year_now - winery_found_date
     logger.debug(correct_ends(year_found_winery))
 
     rendered_page = template.render(

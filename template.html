@@ -115,27 +115,27 @@
         </div>
         {% for category, wines in wines_by_category.items() %}
           <h3 class="d-block text-center">{{ category }}</h3>
-          <div class="row">
-            {% for wine in wines %}
-            <div class="col-lg-4 mb-5 col-md-6">
-              <div class="wine_v_1 text-center pb-4 pt-5">
-                <img src=images/{{wine.picture}} alt="Image" class="img-fluid">
-                  {% if wine.promo  %}
-                    <img src="assets/profitable.png" style="width:10rem;height: 10rem;position:absolute;right: -20px;top: -20px;">
-                  {% endif %}
-                <div>
-                  <h3 class="heading mt-3 mb-3 text-dark">{{wine.name}}</h3>
-                  <p>
-                    {% if wine.type %}
-                      Сорт винограда - {{wine.type}}<br/>
-                    {% endif %}
-                      <span class="price">{{wine.price}} р.</span>
-                  </p>
+            <div class="row">
+              {% for wine in wines %}
+                <div class="col-lg-4 mb-5 col-md-6">
+                  <div class="wine_v_1 text-center pb-4 pt-5">
+                    <img src=images/{{wine.picture}} alt="Image" class="img-fluid">
+                      {% if wine.promo  %}
+                        <img src="assets/profitable.png" style="width:10rem;height: 10rem;position:absolute;right: -20px;top: -20px;">
+                      {% endif %}
+                    <div>
+                      <h3 class="heading mt-3 mb-3 text-dark">{{wine.name}}</h3>
+                        <p>
+                          {% if wine.type %}
+                            Сорт винограда - {{wine.type}}<br/>
+                          {% endif %}
+                            <span class="price">{{wine.price}} р.</span>
+                        </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              {% endfor %}
             </div>
-            {% endfor %}
-          </div>
         {% endfor %}
       </div>
     </div>
