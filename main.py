@@ -8,7 +8,6 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 logger = logging.getLogger("main_logger")
-winery_found_date = 1920
 
 def correct_ends(year):
     """Функция выводит корректное окончание.
@@ -71,6 +70,8 @@ def create_parser():
 
 
 def main():
+    winery_found_date = 1920
+
     logging.config.dictConfig(logger_config)
     parser = create_parser()
     args = parser.parse_args()
